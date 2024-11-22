@@ -1,0 +1,172 @@
+#!/bin/bash
+
+if [ "$(id -u)" != "0" ]; then
+  echo "This script must be run as root" 1>&2
+  exit 1
+fi
+
+# Get the full path to the directory containing this script
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+export SCRIPT_DIR
+
+# Function to execute the selected script
+execute_script() {
+  script_name=$1
+  script_path="$SCRIPT_DIR/data/$script_name"
+
+  if [ -f "$script_path" ]; then
+    if [ -x "$script_path" ]; then
+      whiptail --title "Executing Script" --msgbox "Executing $script_name..." 10 50
+      bash "$script_path"
+    else
+      whiptail --title "Error" --msgbox "The script $script_path is not executable.\nPlease ensure it has the execute permission." 10 50
+    fi
+  else
+    whiptail --title "Error" --msgbox "The script $script_name is not present.\nFeature not integrated." 10 50
+  fi
+}
+
+# Main menu for selecting sections
+main_menu() {
+  SECTION=$(whiptail --title "Main Menu" --menu "Choose a section:" 20 70 10 \
+    "A" "Install Kubernetes" \
+    "B" "Install Rancher" \
+    "C" "Container Runtime" \
+    "D" "Utility" \
+    "E" "Services" \
+    "F" "Deploy" \
+    "G" "Certs" \
+    "H" "Fetch Data" \
+    "I" "Quick Rancher Deploy" \
+    "J" "Log Data Collector" \
+    "Q" "Quit" 3>&1 1>&2 2>&3)
+
+  if [ $? != 0 ]; then
+    echo "Exiting..."
+    exit 0
+  fi
+
+  case $SECTION in
+    A) kubernetes_menu ;;
+    B) rancher_menu ;;
+    C) container_runtime_menu ;;
+    D) utility_menu ;;
+    E) services_menu ;;
+    F) deploy_menu ;;
+    G) certs_menu ;;
+    H) fetch_data_menu ;;
+    I) quick_rancher_menu ;;
+    J) log_data_menu ;;
+    Q) exit 0 ;;
+    *) main_menu ;;
+  esac
+}
+
+# Submenu for Kubernetes
+kubernetes_menu() {
+  OPTION=$(whiptail --title "Kubernetes Menu" --menu "Choose an option:" 15 50 5 \
+    "1" "Install rke" \
+    "V" "Install rke2" \
+    "3" "Install k3s" \
+    "4" "Install Kubernetes" \
+    "M" "Main Menu" 3>&1 1>&2 2>&3)
+
+  if [ $? != 0 ]; then
+    main_menu
+  fi
+
+  case $OPTION in
+    1) execute_script "install_rke.sh" ;;
+    V) execute_script "install_rke2.sh" ;;
+    3) execute_script "install_k3s.sh" ;;
+    4) execute_script "install_kubernetes.sh" ;;
+    M) main_menu ;;
+    *) kubernetes_menu ;;
+  esac
+}
+
+# Submenu for Rancher
+rancher_menu() {
+  OPTION=$(whiptail --title "Rancher Menu" --menu "Choose an option:" 15 50 5 \
+    "1" "Install Rancher via Helm" \
+    "2" "Install Rancher via Docker" \
+    "3" "Install Rancher Prime" \
+    "M" "Main Menu" 3>&1 1>&2 2>&3)
+
+  if [ $? != 0 ]; then
+    main_menu
+  fi
+
+  case $OPTION in
+    1) execute_script "rancher_helm.sh" ;;
+    2) execute_script "install_rancher_manager_with_docker.sh" ;;
+    3) execute_script "install_rancher_prime.sh" ;;
+    M) main_menu ;;
+    *) rancher_menu ;;
+  esac
+}
+
+# Submenu for Container Runtime
+container_runtime_menu() {
+  OPTION=$(whiptail --title "Container Runtime Menu" --menu "Choose an option:" 15 50 5 \
+    "1" "Install Docker" \
+    "2" "Install containerd" \
+    "3" "Install crio" \
+    "4" "Install podman" \
+    "M" "Main Menu" 3>&1 1>&2 2>&3)
+
+  if [ $? != 0 ]; then
+    main_menu
+  fi
+
+  case $OPTION in
+    1) execute_script "install_docker.sh" ;;
+    2) execute_script "install_containerd.sh" ;;
+    3) execute_script "install_crio.sh" ;;
+    4) execute_script "install_podman.sh" ;;
+    M) main_menu ;;
+    *) container_runtime_menu ;;
+  esac
+}
+
+# Submenu for Utility
+utility_menu() {
+  OPTION=$(whiptail --title "Utility Menu" --menu "Choose an option:" 15 50 5 \
+    "1" "Install kubectl" \
+    "2" "Install Helm" \
+    "M" "Main Menu" 3>&1 1>&2 2>&3)
+
+  if [ $? != 0 ]; then
+    main_menu
+  fi
+
+  case $OPTION in
+    1) execute_script "install_kubectl.sh" ;;
+    2) execute_script "install_helm.sh" ;;
+    M) main_menu ;;
+    *) utility_menu ;;
+  esac
+}
+
+# Submenu for Services
+services_menu() {
+  OPTION=$(whiptail --title "Services Menu" --menu "Choose an option:" 15 50 5 \
+    "1" "Deploy DNS Server" \
+    "2" "Deploy Proxy" \
+    "M" "Main Menu" 3>&1 1>&2 2>&3)
+
+  if [ $? != 0 ]; then
+    main_menu
+  fi
+
+  case $OPTION in
+    1) execute_script "deploy_dns_server.sh" ;;
+    2) execute_script "deploy_proxy.sh" ;;
+    M) main_menu ;;
+    *) services_menu ;;
+  esac
+}
+
+# Start the main menu
+main_menu
+
