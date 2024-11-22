@@ -9,7 +9,9 @@ A comprehensive tool for swiftly deploying Rancher products (RKE, RKE2, K3s, Ran
 ## Goals
 
 The goal of the project is to simplify the deployment of required products and enable easy replication of environments with exact product versions. Assist engineers in efficiently troubleshooting live Kubernetes environments.
-Features
+
+
+## Features
 
 **Quick Deployment:** Simplifies the deployment of Rancher products (RKE, RKE2, K3s, Rancher) and supporting tools like Helm and kubectl on Ubuntu OS.
 
