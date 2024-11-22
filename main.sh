@@ -1,4 +1,5 @@
 #!/bin/bash
+
 if [ "$(id -u)" != "0" ]; then
   echo "This script must be run as root" 1>&2
   exit 1
@@ -10,9 +11,30 @@ export SCRIPT_DIR
 
 main() {
   while true; do
-    sleep 1
-    clear
-    show_menu
+    choice=$(whiptail --title "Main Menu" --menu "Choose an option for Installations:" 20 60 14 \
+      "1" "Install Ubuntu Dependencies" \
+      "2" "Install Rancher Manager Using Helm" \
+      "3" "Install Rancher Manager Using Docker" \
+      "4" "Install RKE" \
+      "5" "Install RKE2" \
+      "6" "Install k3s" \
+      "7" "Install kubectl" \
+      "8" "Deploy DNS Server" \
+      "9" "Uninstall All" \
+      "10" "Create RKE2 Config" \
+      "11" "Deploy Private Image Registry" \
+      "12" "Install Docker" \
+      "13" "Install Helm" \
+      "14" "Exit" 3>&1 1>&2 2>&3)
+
+    exitstatus=$?
+    if [ $exitstatus != 0 ]; then
+      echo "Exiting..." 
+      sleep 2
+      clear
+      exit 0
+    fi
+
     case $choice in
       1) execute_script "install_ubuntu_dependencies.sh" ;;
       2) execute_script "install_rancher_manager_with_helm.sh" ;;
@@ -37,48 +59,21 @@ execute_script() {
   script_name=$1
   script_path="$SCRIPT_DIR/data/$script_name"
 
-  echo; echo
-  # Check if the script is present and executable
   if [ -f "$script_path" ]; then
     if [ -x "$script_path" ]; then
-      echo "Executing $script_name..."
-      sleep 1
+      whiptail --title "Executing Script" --msgbox "Executing $script_name..." 10 50
       bash "$script_path"
     else
-      echo "Error: The script $script_path is not executable."
-      echo "Please ensure it has the execute permission."
+      whiptail --title "Error" --msgbox "The script $script_path is not executable.\nPlease ensure it has the execute permission." 10 50
     fi
   else
-    echo "Error: $script_name is not present. Feature not integrated."
+    whiptail --title "Error" --msgbox "The script $script_name is not present.\nFeature not integrated." 10 50
   fi
-
-  # Display empty lines after executing the script
-  sleep 2
-}
-
-show_menu() {
-  echo "Please select an option for Installations:"
-  echo "1. Install Ubuntu Dependencies"
-  echo "2. Install Rancher Manager Using Helm"
-  echo "3. Install Rancher Manager Using Docker"
-  echo "4. Install RKE"
-  echo "5. Install RKE2"
-  echo "6. Install k3s"
-  echo "7. Install kubectl"
-  echo "8. Deploy DNS Server"
-  echo "9. Uninstall All"
-  echo "10. Create RKE2 Config"
-  echo "11. Deploy Private Image Registry"
-  echo "12. Install Docker"
-  echo "13. Install Helm"
-  echo "14. Exit"
-  read -p "Enter your choice [1-14]: " choice
 }
 
 invalid() {
-  echo "--------------------------------------"
-  echo "Invalid option. Please try again."
-  sleep 2
+  whiptail --title "Invalid Option" --msgbox "Invalid option. Please try again." 10 50
 }
 
 main
+
