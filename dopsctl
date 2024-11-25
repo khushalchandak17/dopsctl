@@ -150,6 +150,25 @@ utility_menu() {
   esac
 }
 
+# Submenu for Troubleshoot
+utility_menu() {
+  OPTION=$(whiptail --title "Utility Menu" --menu "Choose an option:" 15 50 5 \
+    "1" "Run Network Overlay Test" \
+    "2" "Start Tcpdump" \
+    "M" "Main Menu" 3>&1 1>&2 2>&3)
+
+  if [ $? != 0 ]; then
+    main_menu
+  fi
+
+  case $OPTION in
+    1) execute_script "troubleshoot_overlaytest.sh" ;;
+    2) execute_script "troubleshoot_tcpdump.sh" ;;
+    M) main_menu ;;
+    *) utility_menu ;;
+  esac
+}
+
 # Submenu for Services
 services_menu() {
   OPTION=$(whiptail --title "Services Menu" --menu "Choose an option:" 15 50 5 \
