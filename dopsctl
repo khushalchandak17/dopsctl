@@ -38,11 +38,10 @@ main_menu() {
     "C" "Container Runtime" \
     "D" "Utility" \
     "E" "Services" \
-    "F" "Deploy" \
-    "G" "Certs" \
-    "H" "Fetch Data" \
-    "I" "Quick Rancher Deploy" \
-    "J" "Log Data Collector" \
+    "F" "Fetch Cluster Insight" \
+    "G" "Quick Rancher Deploy" \
+    "H" "Log Collector" \
+    "I" "Troubleshoot" \
     "Q" "Quit" 3>&1 1>&2 2>&3)
 
   if [ $? != 0 ]; then
@@ -56,11 +55,10 @@ main_menu() {
     C) container_runtime_menu ;;
     D) utility_menu ;;
     E) services_menu ;;
-    F) deploy_menu ;;
-    G) certs_menu ;;
-    H) fetch_data_menu ;;
-    I) quick_rancher_menu ;;
-    J) log_data_menu ;;
+    F) fetch_data_menu ;;
+    G) quick_rancher_menu ;;
+    H) log_data_menu ;;
+    I) troubleshoot_menu ;;
     Q) exit 0 ;;
     *) main_menu ;;
   esac
@@ -157,6 +155,7 @@ services_menu() {
   OPTION=$(whiptail --title "Services Menu" --menu "Choose an option:" 15 50 5 \
     "1" "Deploy DNS Server" \
     "2" "Deploy Proxy" \
+    "3" "Deploy Private Image Registry" \
     "M" "Main Menu" 3>&1 1>&2 2>&3)
 
   if [ $? != 0 ]; then
@@ -166,6 +165,7 @@ services_menu() {
   case $OPTION in
     1) execute_script "deploy_dns_server.sh" ;;
     2) execute_script "deploy_proxy.sh" ;;
+    3) execute_script "deploy_private_registry.sh" ;;
     M) main_menu ;;
     *) services_menu ;;
   esac
