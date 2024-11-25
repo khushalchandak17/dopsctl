@@ -45,7 +45,7 @@ fi
 if [ -f "$DOPSCTL_DIR/dopsctl" ]; then
   chmod +x "$DOPSCTL_DIR/dopsctl"
 ## clean this one
-  chmod +x chmod +x -R "$DOPSCTL_DIR/*"  
+  chmod +x -R "$DOPSCTL_DIR/*"  
 else
   echo "Error: The file $DOPSCTL_DIR/dopsctl does not exist." >&2
   exit 1
