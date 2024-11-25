@@ -151,7 +151,7 @@ utility_menu() {
 }
 
 # Submenu for Troubleshoot
-utility_menu() {
+troubleshoot_menu() {
   OPTION=$(whiptail --title "Utility Menu" --menu "Choose an option:" 15 50 5 \
     "1" "Run Network Overlay Test" \
     "2" "Start Tcpdump" \
