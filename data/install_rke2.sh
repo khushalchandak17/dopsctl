@@ -33,6 +33,9 @@ install_rke2() {
     kubectl -n kube-system rollout status deploy $i
   done
 
+ sleep 5
+ kubectl wait --for=condition=Available deployment --timeout=2m -n kube-system --all
+
   sleep 2
 }
 
