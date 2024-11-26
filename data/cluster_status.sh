@@ -53,6 +53,28 @@ kubectl get componentstatuses
 print_separator "LAST 10 CLUSTER EVENTS"
 kubectl get events --all-namespaces --sort-by='.metadata.creationTimestamp' | tail -n 10
 
+# Logs for RKE2 Server (Last 5 Entries)
+if [[ "$server_version" == *"rke2"* ]]; then
+  print_separator "LAST 5 LOGS FROM RKE2 SERVER"
+  
+  echo -e "${YELLOW}RKE2-Server Logs (journalctl):${RESET}"
+  journalctl -u rke2-server | tail -n 5 | tee /tmp/rke2-server.log
+  grep -E "Warning|Error" /tmp/rke2-server.log || echo -e "${GREEN}No warnings or errors found in RKE2 server logs.${RESET}"
+
+  echo -e "\n${YELLOW}Containerd Logs:${RESET}"
+  tail -n 5 /var/lib/rancher/rke2/agent/containerd/containerd.log | tee /tmp/containerd.log
+  grep -E "Warning|Error" /tmp/containerd.log || echo -e "${GREEN}No warnings or errors found in containerd logs.${RESET}"
+
+  echo -e "\n${YELLOW}Kubelet Logs:${RESET}"
+  tail -n 5 /var/lib/rancher/rke2/agent/logs/kubelet.log | tee /tmp/kubelet.log
+  grep -E "Warning|Error" /tmp/kubelet.log || echo -e "${GREEN}No warnings or errors found in kubelet logs.${RESET}"
+else
+  echo -e "${YELLOW}RKE2-specific logs are not applicable as this is not an RKE2 cluster.${RESET}"
+fi
+
 # End of Script
+
+echo 
+echo
 echo -e "${GREEN}Kubernetes cluster status check completed.${RESET}"
 
