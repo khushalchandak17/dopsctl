@@ -153,8 +153,9 @@ utility_menu() {
 # Submenu for Troubleshoot
 troubleshoot_menu() {
   OPTION=$(whiptail --title "Utility Menu" --menu "Choose an option:" 15 50 5 \
-    "1" "Run Network Overlay Test" \
-    "2" "Start Tcpdump" \
+    "1" "Check Cluster Status" \
+    "2" "Run Network Overlay Test" \
+    "3" "Start Tcpdump" \
     "M" "Main Menu" 3>&1 1>&2 2>&3)
 
   if [ $? != 0 ]; then
@@ -162,8 +163,9 @@ troubleshoot_menu() {
   fi
 
   case $OPTION in
-    1) execute_script "troubleshoot_overlaytest.sh" ;;
-    2) execute_script "troubleshoot_tcpdump.sh" ;;
+    1) execute_script "cluster_status.sh" ;;
+    2) execute_script "troubleshoot_overlaytest.sh" ;;
+    3) execute_script "troubleshoot_tcpdump.sh" ;;
     M) main_menu ;;
     *) utility_menu ;;
   esac
